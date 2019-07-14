@@ -3,7 +3,7 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.0"
-
+	//tools:overrideLibrary="io.jitpack.example.examplebib"
     defaultConfig {
         applicationId "com.status40rerror.payloadgenerator"
         minSdkVersion 14

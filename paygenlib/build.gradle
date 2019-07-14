@@ -1,9 +1,11 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'  
 
+group='com.github.status404error'
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.0"
-
+	//tools:overrideLibrary="io.jitpack.example.examplebib"
     defaultConfig {
         applicationId "com.status40rerror.payloadgenerator"
         minSdkVersion 14
@@ -20,5 +22,6 @@ android {
 }
 
 dependencies {
+	//compile 'com.github.jitpack:android-example:1.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
