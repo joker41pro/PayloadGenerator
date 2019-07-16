@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="10"
+        android:id="@+id/payEdit"
+        android:hint="Custom Payload"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Custom Proxy"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable Custom Proxy"
+            android:layout_alignParentRight="true"
+            android:id="@+id/custom_proxy_switch"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/custom_proxy_switch">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:id="@+id/proxy_ip"
+                android:singleLine="true"
+                android:hint="Proxy IP"/>
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:inputType="numberDecimal"
+                android:layout_height="wrap_content"
+                android:ems="5"
+                android:id="@+id/proxy_port"
+                android:singleLine="true"
+                android:hint="Proxy Port"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+
