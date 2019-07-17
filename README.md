@@ -19,7 +19,7 @@ allprojects {
 #### Add this to your dependencies
 ```
 dependencies { 	 
-    compile 'com.github.status404error:PayloadGenerator:1.2' 	
+    compile 'com.github.status404error:PayloadGenerator:1.3' 	
 }
 ```
 
@@ -36,7 +36,7 @@ On your OnCreate or OnCreateView (for FragmentActivity)
 
 ```java
 Switch switch = (Switch) ...
-payloadGenerator = new PayloadGenerator(this, sharedPrefs);
+payloadGenerator = new PayloadGenerator(this, prefs);
 
 // add switch on the PayloadGenerator
 // so when cancel button is clicked on dialog,
