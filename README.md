@@ -19,7 +19,7 @@ allprojects {
 #### Add this to your dependencies
 ```
 dependencies { 	 
-    compile 'com.github.status404error:PayloadGenerator:1.3' 	
+    compile 'com.github.status404error:PayloadGenerator:1.4' 	
 }
 ```
 
@@ -38,25 +38,23 @@ On your OnCreate or OnCreateView (for FragmentActivity)
 Switch switch = (Switch) ...
 payloadGenerator = new PayloadGenerator(this, prefs);
 
-// add switch on the PayloadGenerator
-// so when cancel button is clicked on dialog,
-// it will automatically uncheck the switch
-payloadGenerator.addPayloadSwitch(switch);
 
 //add custom proxy
 payloadGenerator.setProxyKey("use_custom_proxy","generated_proxy");
 
 ```
 
-On the **custom proxy**, you must add the boolean key used on SharedPreference for enabling custom proxy and then the string key
+* On the **custom proxy**, you must add the boolean key used on SharedPreference for enabling custom proxy and then the string key
 Example: on your PreferenceActivity you used CheckBoxPreference for Custom Proxy, the key for that CheckBoxPreference is your boolean key for enabling custom proxy, same timg for the EditTextPreferece for adding your custom proxy.
 
+
+You can add this condition on your **OnCheckedChangeListener** of your Switch
 
 ```java
 
 if(ischeck){
    //enable custom payload and show PayloadGenerator
-   editor.putBoolean("use_custom_payload",true).apply();
+   prefs.edit().putBoolean("use_custom_payload",true).apply();
    //add condition for switches 
    //if use ssh or sni
    if(ssh_radio.isChecked()){
@@ -67,13 +65,21 @@ if(ischeck){
 
 }else{
 //disable custom payload
-editor.putBoolean("use_custom_payload",false).apply();
-				}
+prefs.edit().putBoolean("use_custom_payload",false).apply();
+}
 ```
 
-If you will not declare key for custom proxy, the Option on the **PayloadGenerator** for custom proxy will be useless
+*If you will not declare key for custom proxy, the Option on the **PayloadGenerator** for custom proxy will be useless
+
+You can also add **OnCancelClickedListener** if you want to add condition if the "Cancel" Button of the PayloadGenerator is clicked
 
 Versions:
+
+* 1.4
+ - Removed addPayloadSwitch(Switch) and replaced with OnCancelClickedListener so you can use Switch repositories (eg.: SwitchButton)
+
+* 1.3
+ - Changing some condition
 
 * 1.2
  - Fixed gradle issues

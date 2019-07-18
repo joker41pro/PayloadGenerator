@@ -14,6 +14,7 @@ import android.widget.*;
 import com.status404error.paygen.*;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
+import android.view.View.*;
 
 public class PayloadGenerator extends AlertDialog.Builder
 {
@@ -54,12 +55,11 @@ public class PayloadGenerator extends AlertDialog.Builder
     private static String[] inject_items = new String[]{"NORMAL", "FRONT INJECT", "BACK INJECT"};
     private static String[] request_items = new String[]{ "CONNECT", "GET", "POST", "PUT", "HEAD", "TRACE", "OPTIONS", "PATCH", "PROPATCH", "DELETE"};
     private static String[] split_items = new String[]{"NORMAL","INSTANT SPLIT", "DELAY SPLIT"};
-    private static Switch gen_switch;
     private static Switch proxy_switch;
     private static View mainV;
     private static View sniV;
     private static View v;
-
+	private static OnCancelClickedListener cancelListener;
     public PayloadGenerator(Context con, SharedPreferences sharedpref){
         super(con);
         context = con;
@@ -67,6 +67,14 @@ public class PayloadGenerator extends AlertDialog.Builder
         edit = sp.edit();
     }
 
+	public static interface OnCancelClickedListener{
+		 public void OnCancelClickListener(DialogInterface dialogInterface);
+	}
+	
+	public PayloadGenerator setOnCancelClickedListener(OnCancelClickedListener listener){
+		cancelListener = listener;
+		return this;
+	}
     public static void showForSSH(final String key){
         AlertDialog.Builder adb = new PayloadGenerator(context, sp);
         adb.setView(mainView());
@@ -89,19 +97,7 @@ public class PayloadGenerator extends AlertDialog.Builder
             }
         });
         adb.setCancelable(false);
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-
-            @Override
-            public void onClick(DialogInterface p1, int p2){
-                try{
-                    gen_switch.setChecked(false);
-                    p1.dismiss();
-                }catch(Exception e){
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                    p1.dismiss();
-                }
-            }
-        });
+        adb.setNegativeButton("Cancel", cancel);
         adb.setNeutralButton("Generator", null);
         final AlertDialog d = adb.create();
         d.show();
@@ -122,24 +118,10 @@ public class PayloadGenerator extends AlertDialog.Builder
 
     public static void showForSNI(final String key){
         AlertDialog.Builder adb = new PayloadGenerator(context, sp);
-        //keys = key;
         adb.setTitle("Custom SNI");
         adb.setView(sniView());
         adb.setCancelable(false);
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-
-            @Override
-            public void onClick(DialogInterface p1, int p2){
-                try{
-                    gen_switch.setChecked(false);
-                    p1.dismiss();
-                }catch(Exception e){
-                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
-                    p1.dismiss();
-                }
-
-            }
-        });
+        adb.setNegativeButton("Cancel", cancel);
         adb.setPositiveButton("Save", new DialogInterface.OnClickListener(){
 
             @Override
@@ -152,10 +134,23 @@ public class PayloadGenerator extends AlertDialog.Builder
         adb.create().show();
     }
 
-    public static void addPayloadSwitch(Switch your_switch){
-        gen_switch = your_switch;
-    }
+	
+	private static DialogInterface.OnClickListener cancel = new DialogInterface.OnClickListener(){
 
+		@Override
+		public void onClick(DialogInterface p1, int p2)
+		{
+			// TODO: Implement this method
+			if(cancelListener != null){
+				cancelListener.OnCancelClickListener(p1);
+			}else{
+				p1.dismiss();
+			}
+			
+		}
+		
+		
+	};
     private static View sniView(){
         sniInflater = LayoutInflater.from(context);
         sniV = sniInflater.inflate(R.layout.sni_paygen_vmodz, null);

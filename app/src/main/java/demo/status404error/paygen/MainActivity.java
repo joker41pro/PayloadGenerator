@@ -43,10 +43,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 		 this.ssh_radio.setChecked(true);
 		 this.paygen_switch.setOnCheckedChangeListener(this);
 		 this.show_btn.setOnClickListener(this);
-		 // add switch on the PayloadGenerator
-		 // so when cancel button is clicked on dialog,
-		 // it will automatically uncheck the switch
-		 paygen.addPayloadSwitch(paygen_switch);
+		 /** Add onCancelClickListener **/
+		 this.paygen.setOnCancelClickedListener(new PayloadGenerator.OnCancelClickedListener(){
+
+				@Override
+				public void OnCancelClickListener(DialogInterface dialogInterface)
+				{
+					// you can uncheck the switch here
+					// you can also disable the usage of custom payload
+					paygen_switch.setChecked(false);
+					editor.putBoolean("use_custom_payload", false).apply();
+					// TODO: Implement this method
+				}
+		 });
 		 //add custom proxy
 		 paygen.setProxyKey("use_custom_proxy","generated_proxy");
     }

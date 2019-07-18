@@ -20,7 +20,8 @@ android {
 }
 
 dependencies {
+	compile project(':paygenlib')
     compile fileTree(dir: 'libs', include: ['*.jar'])
-	compile 'com.github.status404error:PayloadGenerator:1.1'
+	//compile 'com.github.status404error:PayloadGenerator:1.1'
     compile 'com.android.support:appcompat-v7:+'
 }
