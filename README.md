@@ -9,7 +9,7 @@ For easier generating of payload for SSH. Based on the HTTP Injector of Evozi. C
 ``` gradle
 allprojects { 		
    repositories {
-       ... 			
+       ... 			https://github.com/status404error/PayloadGenerator/edit/master/README.md
        maven { url 'https://jitpack.io' }
    } 	
 }
@@ -72,7 +72,21 @@ prefs.edit().putBoolean("use_custom_payload",false).apply();
 *If you will not declare key for custom proxy, the Option on the **PayloadGenerator** for custom proxy will be useless
 
 You can also add **OnCancelClickedListener** if you want to add condition if the "Cancel" Button of the PayloadGenerator is clicked
+```java
+SwitchButton switchButton = (SwitchButton) findViewById(R.id.switchButton);
+payloadGenerator.setOnCancelClickedListener(new PayloadGenerator.OnCancelClickedListener(){
 
+				@Override
+				public void OnCancelClickListener(DialogInterface dialogInterface)
+				{
+					// you can uncheck the switch here
+					// you can also disable the usage of custom payload
+					switchButton.setChecked(false);
+					editor.putBoolean("use_custom_payload", false).apply();
+					// TODO: Implement this method
+				}
+		 });
+```
 Versions:
 
 * 1.4
