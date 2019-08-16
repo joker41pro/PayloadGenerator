@@ -9,7 +9,7 @@ For easier generating of payload for SSH. Based on the HTTP Injector of Evozi. C
 ``` gradle
 allprojects { 		
    repositories {
-       ... 			https://github.com/status404error/PayloadGenerator/edit/master/README.md
+       ... 			
        maven { url 'https://jitpack.io' }
    } 	
 }
