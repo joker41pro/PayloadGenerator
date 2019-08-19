@@ -13,10 +13,8 @@ import android.preference.*;
 import demo.status404error.paygen.R;
 import android.app.*;
 
-
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener, View.OnClickListener
 {
-
 	private PayloadGenerator paygen;
 	private Switch paygen_switch;
 	private RadioButton ssh_radio, sni_radio;
@@ -36,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 		 * else it will not work
 		 */
 		 this.paygen = new PayloadGenerator(this, prefs);
+		 /* to Add Banner use addBanner(int resources) method
+		  * add your Layout file on the parameter
+		  * put addBanner(int resources) before show method
+		  */
+		 this.paygen.addBanner(R.layout.banner_sample);
 		 this.paygen_switch = (Switch) findViewById(R.id.paygen_switch);
 		 this.ssh_radio = (RadioButton) findViewById(R.id.ssh_radio);
 		 this.sni_radio = (RadioButton) findViewById(R.id.sni_edit);

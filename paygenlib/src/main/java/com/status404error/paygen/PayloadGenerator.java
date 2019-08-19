@@ -16,7 +16,7 @@ import com.status404error.paygen.*;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 import android.view.View.*;
 
-public class PayloadGenerator extends AlertDialog.Builder
+public class PayloadGenerator
 {
     private static ArrayAdapter<String> rAdapter, iAdapter, sAdapter;
     private static CheckBox cbBack;
@@ -43,10 +43,10 @@ public class PayloadGenerator extends AlertDialog.Builder
     private static RadioButton rNomal;
     private static RadioButton rSplit;
     private static RadioButton rDirect;
-    private static SharedPreferences prefs;
+    private static SharedPreferences prefs_vmodz;
     private static SharedPreferences sp;
     private static SharedPreferences.Editor edit;
-    private static SharedPreferences.Editor editor;
+    private static SharedPreferences.Editor editor_vmodz;
     private static Spinner injectSpin;
     private static Spinner requestSpin;
     private static Spinner splitSpin;
@@ -59,9 +59,11 @@ public class PayloadGenerator extends AlertDialog.Builder
     private static View mainV;
     private static View sniV;
     private static View v;
+	private static int resId;
+	private static boolean showBanner = false;
 	private static OnCancelClickedListener cancelListener;
+	
     public PayloadGenerator(Context con, SharedPreferences sharedpref){
-        super(con);
         context = con;
         sp = sharedpref;
         edit = sp.edit();
@@ -75,10 +77,15 @@ public class PayloadGenerator extends AlertDialog.Builder
 		cancelListener = listener;
 		return this;
 	}
+	
     public static void showForSSH(final String key){
-        AlertDialog.Builder adb = new PayloadGenerator(context, sp);
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setView(mainView());
-        adb.setTitle("SSH Custom Payload");
+		if(showBanner == true){
+			adb.setCustomTitle(addBanner(resId));
+		}else{
+			adb.setTitle("SSH Custom Payload");
+		}
         editxt=mainEdit;
         adb.setPositiveButton("Save", new DialogInterface.OnClickListener(){
             @Override
@@ -86,13 +93,13 @@ public class PayloadGenerator extends AlertDialog.Builder
             {
                 String m = mainEdit.getText().toString();
                 edit.putString(key, m).commit();
-                editor.putString("full_payload_vmodz",m).commit();
+                editor_vmodz.putString("full_payload_vmodz",m).commit();
                 if(isCustomProxy()){
                     String rp = mainProxy.getText().toString()+":"+mainPort.getText().toString();
                     edit.putString(proxySetting, rp).commit();
                     edit.putBoolean(proxyKey,proxy_switch.isChecked()).commit();
-                    editor.putString("custom_proxyIP_vmodz", mainProxy.getText().toString()).commit();
-                    editor.putString("custom_proxyPort_vmodz",mainPort.getText().toString()).commit();
+                    editor_vmodz.putString("custom_proxyIP_vmodz", mainProxy.getText().toString()).commit();
+                    editor_vmodz.putString("custom_proxyPort_vmodz",mainPort.getText().toString()).commit();
                 }
             }
         });
@@ -117,8 +124,12 @@ public class PayloadGenerator extends AlertDialog.Builder
     }
 
     public static void showForSNI(final String key){
-        AlertDialog.Builder adb = new PayloadGenerator(context, sp);
-        adb.setTitle("Custom SNI");
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        if(showBanner == true){
+			adb.setCustomTitle(addBanner(resId));
+		}else{
+			adb.setTitle("Custom SNI");
+		}
         adb.setView(sniView());
         adb.setCancelable(false);
         adb.setNegativeButton("Cancel", cancel);
@@ -128,12 +139,11 @@ public class PayloadGenerator extends AlertDialog.Builder
             public void onClick(DialogInterface p1, int p2)
             {
                 edit.putString(key, sni.getText().toString()).commit();
-                editor.putString("custom_sni_vmodz",sni.getText().toString()).commit();
+                editor_vmodz.putString("custom_sni_vmodz",sni.getText().toString()).commit();
             }
         });
         adb.create().show();
     }
-
 	
 	private static DialogInterface.OnClickListener cancel = new DialogInterface.OnClickListener(){
 
@@ -148,9 +158,15 @@ public class PayloadGenerator extends AlertDialog.Builder
 			}
 			
 		}
-		
-		
 	};
+	
+	public static View addBanner(int resources){
+		View views = LayoutInflater.from(context).inflate(resources,null);
+		resId = resources;
+		showBanner = true;
+		return views;
+	}
+	
     private static View sniView(){
         sniInflater = LayoutInflater.from(context);
         sniV = sniInflater.inflate(R.layout.sni_paygen_vmodz, null);
@@ -160,9 +176,13 @@ public class PayloadGenerator extends AlertDialog.Builder
     }
 
     private static void showPaygenSSH(final EditText edit){
-        AlertDialog.Builder adb = new PayloadGenerator(context, sp);
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
         adb.setView(generatorView());
-        adb.setTitle("Payload Generator");
+        if(showBanner == true){
+			adb.setCustomTitle(addBanner(resId));
+		}else{
+			adb.setTitle("Payload Generator");
+		}
         adb.setCancelable(false);
         adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
 
@@ -480,7 +500,7 @@ public class PayloadGenerator extends AlertDialog.Builder
                         injectSpin.setSelection(2);
                     }
                 }
-                editor.putInt("reqSpin_vmodz", p3).commit();
+                editor_vmodz.putInt("reqSpin_vmodz", p3).commit();
             }else if(id == R.id.inject_spin){
                 if(p3 !=0 ){
                     requestSpin.setSelection(1);
@@ -490,7 +510,7 @@ public class PayloadGenerator extends AlertDialog.Builder
                     }
                     requestSpin.setSelection(0);
                 }
-                editor.putInt("injSpin_vmodz", p3).commit();
+                editor_vmodz.putInt("injSpin_vmodz", p3).commit();
             }
         }
 
@@ -503,57 +523,57 @@ public class PayloadGenerator extends AlertDialog.Builder
 
 
     private static void save(){
-        prefs = context.getSharedPreferences("status404error_prefs", context.MODE_PRIVATE);
-        editor = prefs.edit();
-        editor.putString("my_inputted_payload",payload.getText().toString()).commit();
-        editor.putBoolean("rNormal_vmodz", rNomal.isChecked()).commit();
-        editor.putBoolean("rSplit_vmodz", rSplit.isChecked()).commit();
-        editor.putBoolean("rDirect_vmodz", rDirect.isChecked()).commit();
-        editor.putBoolean("cbFront_vmodz", cbFront.isChecked()).commit();
-        editor.putBoolean("cbBack_vmodz", cbBack.isChecked()).commit();
-        editor.putBoolean("cbOnline_vmodz", cbOnline.isChecked()).commit();
-        editor.putBoolean("cbForward_vmodz", cbForward.isChecked()).commit();
-        editor.putBoolean("cbReverse_vmodz", cbReverse.isChecked()).commit();
-        editor.putBoolean("cbKeep_vmodz", cbKeep.isChecked()).commit();
-        editor.putBoolean("cbUser_vmodz", cbUser.isChecked()).commit();
-        editor.putBoolean("cbReferer_vmodz", cbReferer.isChecked()).commit();
-        editor.putBoolean("cbRaw_vmodz", cbRaw.isChecked()).commit();
-        editor.putBoolean("cbDual_vmodz", cbDual.isChecked()).commit();
+        prefs_vmodz = context.getSharedPreferences("status404error_prefs_vmodz", context.MODE_PRIVATE);
+        editor_vmodz = prefs_vmodz.edit();
+        editor_vmodz.putString("my_inputted_payload",payload.getText().toString()).commit();
+        editor_vmodz.putBoolean("rNormal_vmodz", rNomal.isChecked()).commit();
+        editor_vmodz.putBoolean("rSplit_vmodz", rSplit.isChecked()).commit();
+        editor_vmodz.putBoolean("rDirect_vmodz", rDirect.isChecked()).commit();
+        editor_vmodz.putBoolean("cbFront_vmodz", cbFront.isChecked()).commit();
+        editor_vmodz.putBoolean("cbBack_vmodz", cbBack.isChecked()).commit();
+        editor_vmodz.putBoolean("cbOnline_vmodz", cbOnline.isChecked()).commit();
+        editor_vmodz.putBoolean("cbForward_vmodz", cbForward.isChecked()).commit();
+        editor_vmodz.putBoolean("cbReverse_vmodz", cbReverse.isChecked()).commit();
+        editor_vmodz.putBoolean("cbKeep_vmodz", cbKeep.isChecked()).commit();
+        editor_vmodz.putBoolean("cbUser_vmodz", cbUser.isChecked()).commit();
+        editor_vmodz.putBoolean("cbReferer_vmodz", cbReferer.isChecked()).commit();
+        editor_vmodz.putBoolean("cbRaw_vmodz", cbRaw.isChecked()).commit();
+        editor_vmodz.putBoolean("cbDual_vmodz", cbDual.isChecked()).commit();
     }
 
     private static void mainLoad(){
-        prefs = context.getSharedPreferences("status404error_prefs", context.MODE_PRIVATE);
-        editor = prefs.edit();
-        proxy_switch.setChecked(prefs.getBoolean("proxy_enable_vmodz",false));
-        mainEdit.setText(prefs.getString("full_payload_vmodz",""));
-        mainProxy.setText(prefs.getString("custom_proxyIP_vmodz",""));
-        mainPort.setText(prefs.getString("custom_proxyPort_vmodz",""));
+        prefs_vmodz = context.getSharedPreferences("status404error_prefs_vmodz", context.MODE_PRIVATE);
+        editor_vmodz = prefs_vmodz.edit();
+        proxy_switch.setChecked(prefs_vmodz.getBoolean("proxy_enable_vmodz",false));
+        mainEdit.setText(prefs_vmodz.getString("full_payload_vmodz",""));
+        mainProxy.setText(prefs_vmodz.getString("custom_proxyIP_vmodz",""));
+        mainPort.setText(prefs_vmodz.getString("custom_proxyPort_vmodz",""));
     }
 
     private static void sniLoad(){
-        prefs = context.getSharedPreferences("status404error_prefs", context.MODE_PRIVATE);
-        editor = prefs.edit();
-        sni.setText(prefs.getString("custom_sni_vmodz",""));
+        prefs_vmodz = context.getSharedPreferences("status404error_prefs_vmodz", context.MODE_PRIVATE);
+        editor_vmodz = prefs_vmodz.edit();
+        sni.setText(prefs_vmodz.getString("custom_sni_vmodz",""));
     }
 
     private static void load(){
-        prefs = context.getSharedPreferences("status404error_prefs", context.MODE_PRIVATE);
-        editor = prefs.edit();
-        payload.setText(prefs.getString("my_inputted_payload",""));
-        rNomal.setChecked(prefs.getBoolean("rNormal_vmodz", true));
-        rSplit.setChecked(prefs.getBoolean("rSplit_vmodz", false));
-        rDirect.setChecked(prefs.getBoolean("rDirect_vmodz", false));
-        cbBack.setChecked(prefs.getBoolean("cbBack_vmodz", false));
-        cbOnline.setChecked(prefs.getBoolean("cbOnline_vmodz", false));
-        cbForward.setChecked(prefs.getBoolean("cbForward_vmodz", false));
-        cbReverse.setChecked(prefs.getBoolean("cbReverse_vmodz", false));
-        cbKeep.setChecked(prefs.getBoolean("cbKeep_vmodz", false));
-        cbUser.setChecked(prefs.getBoolean("cbUser_vmodz", false));
-        cbReferer.setChecked(prefs.getBoolean("cbReferer_vmodz", false));
-        cbRaw.setChecked(prefs.getBoolean("cbRaw_vmodz", false));
-        cbDual.setChecked(prefs.getBoolean("cbDual_vmodz", false));
-        requestSpin.setSelection(prefs.getInt("reqSpin_vmodz",0));
-        injectSpin.setSelection(prefs.getInt("injSpin_vmodz",0));
+        prefs_vmodz = context.getSharedPreferences("status404error_prefs_vmodz", context.MODE_PRIVATE);
+        editor_vmodz = prefs_vmodz.edit();
+        payload.setText(prefs_vmodz.getString("my_inputted_payload",""));
+        rNomal.setChecked(prefs_vmodz.getBoolean("rNormal_vmodz", true));
+        rSplit.setChecked(prefs_vmodz.getBoolean("rSplit_vmodz", false));
+        rDirect.setChecked(prefs_vmodz.getBoolean("rDirect_vmodz", false));
+        cbBack.setChecked(prefs_vmodz.getBoolean("cbBack_vmodz", false));
+        cbOnline.setChecked(prefs_vmodz.getBoolean("cbOnline_vmodz", false));
+        cbForward.setChecked(prefs_vmodz.getBoolean("cbForward_vmodz", false));
+        cbReverse.setChecked(prefs_vmodz.getBoolean("cbReverse_vmodz", false));
+        cbKeep.setChecked(prefs_vmodz.getBoolean("cbKeep_vmodz", false));
+        cbUser.setChecked(prefs_vmodz.getBoolean("cbUser_vmodz", false));
+        cbReferer.setChecked(prefs_vmodz.getBoolean("cbReferer_vmodz", false));
+        cbRaw.setChecked(prefs_vmodz.getBoolean("cbRaw_vmodz", false));
+        cbDual.setChecked(prefs_vmodz.getBoolean("cbDual_vmodz", false));
+        requestSpin.setSelection(prefs_vmodz.getInt("reqSpin_vmodz",0));
+        injectSpin.setSelection(prefs_vmodz.getInt("injSpin_vmodz",0));
     }
 
     private static CompoundButton.OnCheckedChangeListener cb = new CompoundButton.OnCheckedChangeListener(){
@@ -609,12 +629,12 @@ public class PayloadGenerator extends AlertDialog.Builder
                 if(p2){
                     mainProxy.setEnabled(true);
                     mainPort.setEnabled(true);
-                    editor.putBoolean("proxy_enable_vmodz",true).commit();
+                    editor_vmodz.putBoolean("proxy_enable_vmodz",true).commit();
                     edit.putBoolean(proxyKey,true).commit();
                 }else{
                     mainProxy.setEnabled(false);
                     mainPort.setEnabled(false);
-                    editor.putBoolean("proxy_enable_vmodz",false).commit();
+                    editor_vmodz.putBoolean("proxy_enable_vmodz",false).commit();
                     edit.putBoolean(proxyKey, false).commit();
                 }
             }else if(id == R.id.cbRaw){
@@ -629,9 +649,9 @@ public class PayloadGenerator extends AlertDialog.Builder
     };
 
     private static boolean isCustomProxy(){
-        if(!prefs.contains("proxy_enable_vmodz")){
-            editor.putBoolean("proxy_enable_vmodz",false);
+        if(!prefs_vmodz.contains("proxy_enable_vmodz")){
+            editor_vmodz.putBoolean("proxy_enable_vmodz",false);
         }
-        return prefs.getBoolean("proxy_enable_vmodz",false);
+        return prefs_vmodz.getBoolean("proxy_enable_vmodz",false);
     }
 }
