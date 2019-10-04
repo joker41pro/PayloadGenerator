@@ -19,7 +19,7 @@ allprojects {
 #### Add this to your dependencies
 ```
 dependencies { 	 
-    compile 'com.github.status404error:PayloadGenerator:1.4' 	
+    compile 'com.github.status404error:PayloadGenerator:v1.5' 	
 }
 ```
 
